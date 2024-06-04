@@ -2,3 +2,4 @@ hey 12200
 
 ken 799
 test 1000
+awd 1000
