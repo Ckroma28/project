@@ -147,40 +147,15 @@ public class Panel extends javax.swing.JPanel {
             user = UserFileHandler.loadUsersData(name);
             JOptionPane.showMessageDialog(this, "Welcome " + user.getUsername() + ", Your current balance is : $" + user.getBalance());
         }
-
-        blackjack = new Blackjack(user);
-        coinflip = new Coinflip(user);
-        slots = new SlotMachine(user);
-
-        removeAll();
-        revalidate();
-        repaint();
-
-        JButton blackjackButton = new JButton("Blackjack");
-        JButton slotsButton = new JButton("Slots");
-        JButton coinflipButton = new JButton("Coinflip");
-        JButton exitButton = new JButton("Exit");
-
-        blackjackButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                blackjack.play();
-            }
-        });
-
-        slotsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                slots.play();
-            }
-        });
-
-        coinflipButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                coinflip.play();
-            }
-        });
+        
+        GameSelection gameSelection = new GameSelection();
+        gameSelection.updateUser(user);
+        
+        JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        topFrame.getContentPane().removeAll();
+        topFrame.getContentPane().add(gameSelection);
+        topFrame.revalidate();
+        topFrame.repaint();
     }
 
     // Variables declaration - do not modify                     
