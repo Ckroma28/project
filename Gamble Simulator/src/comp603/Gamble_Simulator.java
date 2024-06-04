@@ -12,7 +12,7 @@ public class Gamble_Simulator {
         Panel panel = new Panel();
         frame.add(panel);
 
-        frame.setSize(1000, 1000);
+        frame.setSize(1000, 500);
         frame.setVisible(true);
     }
 }
