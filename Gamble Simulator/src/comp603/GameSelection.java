@@ -1,6 +1,10 @@
 package comp603;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 public class GameSelection extends javax.swing.JPanel {
 
@@ -50,6 +54,12 @@ public class GameSelection extends javax.swing.JPanel {
         BlackjackButton.setMaximumSize(new java.awt.Dimension(200, 50));
         BlackjackButton.setMinimumSize(new java.awt.Dimension(200, 50));
         BlackjackButton.setPreferredSize(new java.awt.Dimension(200, 50));
+        
+        BlackjackButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                BlackjackButtonActionPerformed(evt);
+            }
+        });
 
         jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
@@ -157,6 +167,16 @@ public class GameSelection extends javax.swing.JPanel {
     private void QuitButtonActionPerformed(java.awt.event.ActionEvent evt) {
         JOptionPane.showMessageDialog(this, "Thanks for Playing!");
         System.exit(0);
+    }
+    
+    private void BlackjackButtonActionPerformed(ActionEvent evt) {
+        BlackjackGUI blackjackGUI = new BlackjackGUI();
+
+        JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        topFrame.getContentPane().removeAll();
+        topFrame.add(blackjackGUI);
+        topFrame.validate();
+        topFrame.repaint();
     }
 
 
