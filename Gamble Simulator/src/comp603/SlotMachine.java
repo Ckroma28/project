@@ -104,7 +104,7 @@ public class SlotMachine {
         }
     }
 
-    private int[] spinSlots() {
+    int[] spinSlots() {
         int[] slots = {number.nextInt(10), number.nextInt(10), number.nextInt(10)};
         System.out.println(slots[0] + "  " + slots[1] + "  " + slots[2]);
         return slots;
@@ -123,5 +123,9 @@ public class SlotMachine {
             System.out.println("You lost $" + betAmount);
             user.setBalance((int) (user.getBalance() - betAmount));
         }
+    }
+
+    double calculateWinnings(int[] slots, double bet) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
