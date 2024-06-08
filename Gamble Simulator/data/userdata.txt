@@ -1,4 +1,4 @@
 hey 12200
 
-ken 824
+ken 784
 test 1000

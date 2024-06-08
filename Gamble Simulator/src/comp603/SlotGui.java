@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class SlotGui extends JPanel {
 
@@ -11,8 +13,6 @@ public class SlotGui extends JPanel {
     private SlotMachine slotMachine;
     private JLabel balanceLabel;
     private JLabel resultLabel;
-    private JButton instructionsButton;
-    private JButton quitButton;
 
     public SlotGui(User user) {
         this.user = user;
@@ -20,8 +20,10 @@ public class SlotGui extends JPanel {
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
+        setBorder(BorderFactory.createEmptyBorder(100, 100, 100, 100));
+
         JLabel titleLabel = new JLabel("Slot Machine");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 48));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(titleLabel);
 
@@ -31,42 +33,9 @@ public class SlotGui extends JPanel {
         add(balanceLabel);
 
         resultLabel = new JLabel("");
-        resultLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        resultLabel.setFont(new Font("Arial", Font.BOLD, 36));
         resultLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(resultLabel);
-
-        // Instructions Button
-        instructionsButton = new JButton("Instructions");
-        instructionsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        instructionsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                displayInstructions();
-                removeInstructionsButton();
-            }
-        });
-        add(instructionsButton);
-
-        JButton spinButton = new JButton("Spin");
-        spinButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        spinButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleSpin();
-            }
-        });
-        add(spinButton);
-
-        // Quit Button
-        quitButton = new JButton("Quit");
-        quitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        quitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                quitToHomepage();
-            }
-        });
-        add(quitButton);
 
         askForInstructions();
     }
@@ -76,12 +45,12 @@ public class SlotGui extends JPanel {
         if (response == JOptionPane.YES_OPTION) {
             displayInstructions();
         }
-        removeInstructionsButton();
+        removeComponentsAfterInstructions();
     }
 
     private void displayInstructions() {
         String instructions = "1. You can bet as much as you want, however it must be within your budget\n"
-                + "2. Type '1' to play and 'x' to quit the game\n"
+                + "2. Type 'Enter' to play and 'x' to quit the game\n"
                 + "3. If the slot machine hits 2 of the same numbers, you win 1.5x the amount you bet\n"
                 + "4. If the slot machine numbers hit all 3 of the same number, you win 3x the amount you bet\n"
                 + "5. If all 3 numbers don't match, you lose the money that you bet\n"
@@ -89,58 +58,120 @@ public class SlotGui extends JPanel {
         JOptionPane.showMessageDialog(this, instructions, "Instructions", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void removeInstructionsButton() {
-        remove(instructionsButton);
+    private void removeComponentsAfterInstructions() {
+        removeAll();
         revalidate();
         repaint();
+
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        resultLabel.setText("Press 'Enter' to start playing the slot machine.");
+        add(resultLabel, gbc);
+
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    handleBetInput();
+                }
+            }
+        });
+        setFocusable(true);
+        requestFocusInWindow();
     }
 
-    private void handleSpin() {
+    private void handleBetInput() {
         String betStr = JOptionPane.showInputDialog(this, "Enter your bet amount:");
         if (betStr != null) {
             try {
                 double bet = Double.parseDouble(betStr);
                 if (bet > 0 && bet <= user.getBalance()) {
-                    user.setBalance((int) (user.getBalance() - bet));
-                    balanceLabel.setText("Balance: $" + user.getBalance());
-
-                    int[] slots = slotMachine.spinSlots();
-                    double winnings = slotMachine.calculateWinnings(slots, bet);
-                    user.setBalance((int) (user.getBalance() + winnings));
-                    balanceLabel.setText("Balance: $" + user.getBalance());
-
-                    displayResults(slots, winnings);
-                    UserFileHandler.updateUserData(user, user.getBalance());
+                    handleSpin(bet);
                 } else {
                     JOptionPane.showMessageDialog(this, "Invalid bet amount. Please bet within your balance.", "Error", JOptionPane.ERROR_MESSAGE);
+                    requestFocusInWindow();
                 }
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, "Invalid input. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
+                requestFocusInWindow();
             }
         }
     }
 
+    private void handleSpin(double bet) {
+        user.setBalance((int) (user.getBalance() - bet));
+        balanceLabel.setText("Balance: $" + user.getBalance());
+
+        int[] slots = slotMachine.spinSlots();
+        double winnings = slotMachine.calculateWinnings(slots, bet);
+
+        user.setBalance((int) (user.getBalance() + winnings));
+
+        balanceLabel.setText("Balance: $" + user.getBalance());
+
+        displayResults(slots, winnings);
+
+        UserFileHandler.updateUserData(user, user.getBalance());
+    }
+
     private void displayResults(int[] slots, double winnings) {
-        StringBuilder resultText = new StringBuilder("Your numbers are: ");
+        removeAll();
+        revalidate();
+        repaint();
+
+        setLayout(new GridBagLayout()); 
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        StringBuilder resultText = new StringBuilder("<html><div style='text-align: center;'>Your numbers are:<br>");
         for (int slot : slots) {
             resultText.append(slot).append(" ");
         }
-        resultText.append("\n");
+        resultText.append("<br>");
         if (winnings > 0) {
             resultText.append("You won: $").append(winnings);
         } else {
             resultText.append("You lost: $").append(-winnings);
         }
-        resultLabel.setText(resultText.toString());
-    }
+        resultText.append("</div></html>");
 
-    private void quitToHomepage() {
-        JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-        topFrame.getContentPane().removeAll();
-        GameSelection gameSelection = new GameSelection();
-        gameSelection.updateUser(user);
-        topFrame.add(gameSelection);
-        topFrame.validate();
-        topFrame.repaint();
+        resultLabel.setText(resultText.toString());
+        add(resultLabel, gbc);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout());
+
+        JButton playAgainButton = new JButton("Play Again");
+        JButton quitButton = new JButton("Quit");
+
+        playAgainButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removeComponentsAfterInstructions();
+            }
+        });
+
+        quitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(SlotGui.this);
+                topFrame.getContentPane().removeAll();
+                topFrame.add(new GameSelection());
+                topFrame.validate();
+                topFrame.repaint();
+            }
+        });
+
+        buttonPanel.add(playAgainButton);
+        buttonPanel.add(quitButton);
+
+        gbc.gridy = 1;
+        add(buttonPanel, gbc);
     }
 }
