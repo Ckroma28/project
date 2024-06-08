@@ -104,9 +104,8 @@ public class SlotMachine {
         }
     }
 
-    int[] spinSlots() {
+    public int[] spinSlots() {
         int[] slots = {number.nextInt(10), number.nextInt(10), number.nextInt(10)};
-        System.out.println(slots[0] + "  " + slots[1] + "  " + slots[2]);
         return slots;
     }
 
@@ -125,7 +124,13 @@ public class SlotMachine {
         }
     }
 
-    double calculateWinnings(int[] slots, double bet) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public double calculateWinnings(int[] slots, double bet) {
+        if (slots[0] == slots[1] && slots[0] == slots[2]) {
+            return bet * 3;
+        } else if (slots[0] == slots[1] || slots[0] == slots[2] || slots[1] == slots[2]) {
+            return bet * 1.5;
+        } else {
+            return -bet;
+        }
     }
 }

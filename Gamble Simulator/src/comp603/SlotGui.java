@@ -11,6 +11,8 @@ public class SlotGui extends JPanel {
     private SlotMachine slotMachine;
     private JLabel balanceLabel;
     private JLabel resultLabel;
+    private JButton instructionsButton;
+    private JButton quitButton;
 
     public SlotGui(User user) {
         this.user = user;
@@ -34,12 +36,13 @@ public class SlotGui extends JPanel {
         add(resultLabel);
 
         // Instructions Button
-        JButton instructionsButton = new JButton("Instructions");
+        instructionsButton = new JButton("Instructions");
         instructionsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         instructionsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 displayInstructions();
+                removeInstructionsButton();
             }
         });
         add(instructionsButton);
@@ -54,6 +57,17 @@ public class SlotGui extends JPanel {
         });
         add(spinButton);
 
+        // Quit Button
+        quitButton = new JButton("Quit");
+        quitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        quitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                quitToHomepage();
+            }
+        });
+        add(quitButton);
+
         askForInstructions();
     }
 
@@ -62,6 +76,7 @@ public class SlotGui extends JPanel {
         if (response == JOptionPane.YES_OPTION) {
             displayInstructions();
         }
+        removeInstructionsButton();
     }
 
     private void displayInstructions() {
@@ -72,6 +87,12 @@ public class SlotGui extends JPanel {
                 + "5. If all 3 numbers don't match, you lose the money that you bet\n"
                 + "6. That is all you need to know on how to play the slot machine";
         JOptionPane.showMessageDialog(this, instructions, "Instructions", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void removeInstructionsButton() {
+        remove(instructionsButton);
+        revalidate();
+        repaint();
     }
 
     private void handleSpin() {
@@ -85,14 +106,11 @@ public class SlotGui extends JPanel {
 
                     int[] slots = slotMachine.spinSlots();
                     double winnings = slotMachine.calculateWinnings(slots, bet);
-
-                    // Update user's balance with the winnings
                     user.setBalance((int) (user.getBalance() + winnings));
-
-                    // Update balance label to display the updated balance
                     balanceLabel.setText("Balance: $" + user.getBalance());
 
                     displayResults(slots, winnings);
+                    UserFileHandler.updateUserData(user, user.getBalance());
                 } else {
                     JOptionPane.showMessageDialog(this, "Invalid bet amount. Please bet within your balance.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -102,13 +120,27 @@ public class SlotGui extends JPanel {
         }
     }
 
-
-        private void displayResults(int[] slots, double winnings) {
-            StringBuilder resultText = new StringBuilder("Your numbers are: ");
-            for (int slot : slots) {
-                resultText.append(slot).append(" ");
-            }
-        resultText.append("\n").append("You won: $").append(winnings);
+    private void displayResults(int[] slots, double winnings) {
+        StringBuilder resultText = new StringBuilder("Your numbers are: ");
+        for (int slot : slots) {
+            resultText.append(slot).append(" ");
+        }
+        resultText.append("\n");
+        if (winnings > 0) {
+            resultText.append("You won: $").append(winnings);
+        } else {
+            resultText.append("You lost: $").append(-winnings);
+        }
         resultLabel.setText(resultText.toString());
+    }
+
+    private void quitToHomepage() {
+        JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        topFrame.getContentPane().removeAll();
+        GameSelection gameSelection = new GameSelection();
+        gameSelection.updateUser(user);
+        topFrame.add(gameSelection);
+        topFrame.validate();
+        topFrame.repaint();
     }
 }
