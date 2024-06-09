@@ -147,7 +147,6 @@ public class GameSelection extends javax.swing.JPanel {
                         .addComponent(CoinflipButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addComponent(BlackjackButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addComponent(QuitButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-
                     .addContainerGap(150, Short.MAX_VALUE))
         );
 
@@ -185,6 +184,11 @@ public class GameSelection extends javax.swing.JPanel {
     }
 
     private void SlotsButtonActionPerformed(ActionEvent evt) {
+        if (user == null) {
+            JOptionPane.showMessageDialog(this, "User not initialized!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         SlotGui slotGui = new SlotGui(user);
 
         JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
