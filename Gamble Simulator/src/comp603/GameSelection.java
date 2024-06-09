@@ -1,20 +1,24 @@
 package comp603;
 
+import comp603.BlackjackGUI;
+import comp603.SlotGui;
+import comp603.UserDB;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class GameSelection extends javax.swing.JPanel {
 
     private User user;
 
-    public GameSelection() {
+    public GameSelection(User user) {
+        this.user = user;
         initComponents();
+        updateUser(user);
     }
 
     public void updateUser(User user) {
@@ -128,45 +132,51 @@ public class GameSelection extends javax.swing.JPanel {
                             .addComponent(BlackjackButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(QuitButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                        .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jScrollPane3, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE))
-                    .addContainerGap(150, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(50, 50, 50)
-                    .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 60, GroupLayout.PREFERRED_SIZE)
-                    .addGap(18, 18, 18)
-                    .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-                    .addGap(18, 18, 18)
-                    .addComponent(jScrollPane3, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-                    .addGap(50, 50, 50)
-                    .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(SlotsButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(CoinflipButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(BlackjackButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(QuitButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addContainerGap(150, Short.MAX_VALUE))
-        );
-
-        GroupLayout layout = new GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-    }
+                            .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane3, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE))
+                            .addContainerGap(150, Short.MAX_VALUE))
+                            );
+                            jPanel1Layout.setVerticalGroup(
+                            jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(50, 50, 50)
+                            .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 60, GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(jScrollPane3, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+                            .addGap(50, 50, 50)
+                            .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(SlotsButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(CoinflipButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(BlackjackButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(QuitButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                            .addContainerGap(150, Short.MAX_VALUE))
+                            );
+                            GroupLayout layout = new GroupLayout(this);
+                            this.setLayout(layout);
+                            layout.setHorizontalGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addContainerGap())
+                            );
+                            layout.setVerticalGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addContainerGap())
+                            );
+                            layout.setVerticalGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            );
+                        }
 
     private void QuitButtonActionPerformed(java.awt.event.ActionEvent evt) {
         JOptionPane.showMessageDialog(this, "Thanks for Playing!");
@@ -174,8 +184,7 @@ public class GameSelection extends javax.swing.JPanel {
     }
 
     private void BlackjackButtonActionPerformed(ActionEvent evt) {
-        BlackjackGUI blackjackGUI = new BlackjackGUI();
-
+        BlackjackGUI blackjackGUI = new BlackjackGUI(user);
         JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
         topFrame.getContentPane().removeAll();
         topFrame.add(blackjackGUI);
@@ -188,9 +197,7 @@ public class GameSelection extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "User not initialized!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
         SlotGui slotGui = new SlotGui(user);
-
         JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
         topFrame.getContentPane().removeAll();
         topFrame.add(slotGui);

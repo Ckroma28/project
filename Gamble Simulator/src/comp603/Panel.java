@@ -6,16 +6,14 @@ import java.awt.event.ActionListener;
 
 public class Panel extends javax.swing.JPanel {
 
-    User user;
-
     public Panel() {
         initComponents();
+        UserDB.connect(); // Connect to the database when the panel is initialized
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
-
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         WelcomeText = new javax.swing.JTextArea();
@@ -114,9 +112,9 @@ public class Panel extends javax.swing.JPanel {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(7, Short.MAX_VALUE))
         );
-    }// </editor-fold>                         
+    }// </editor-fold>
 
-    private void EnterButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
+    private void EnterButtonActionPerformed(java.awt.event.ActionEvent evt) {
         String name = UsernameBox.getText();
 
         if (name.isEmpty()) {
@@ -124,27 +122,26 @@ public class Panel extends javax.swing.JPanel {
             return;
         }
 
-        if (!UserFileHandler.userExists(name)) {
-            JOptionPane.showMessageDialog(this, "Username not found, creating new user...");
-            User newUser = new User(name);
-            UserFileHandler.updateUserData(newUser, 1000);
-            user = newUser;
-        } else {
-            user = UserFileHandler.loadUsersData(name);
-            JOptionPane.showMessageDialog(this, "Welcome " + user.getUsername() + ", Your current balance is : $" + user.getBalance());
+        User user = UserDB.getUser(name); // Retrieve user from the database
+
+        if (user == null) {
+            // If user doesn't exist in the database, create a new user with $1000 balance
+            user = new User(name, 1000);
+            UserDB.insertUser(name, 1000); // Insert the new user into the database
         }
-        
-        GameSelection gameSelection = new GameSelection();
+
+        JOptionPane.showMessageDialog(this, "Welcome " + user.getUsername() + ", Your current balance is : $" + user.getBalance());
+
+        GameSelection gameSelection = new GameSelection(user);
         gameSelection.updateUser(user);
-        
+
         JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
         topFrame.getContentPane().removeAll();
         topFrame.getContentPane().add(gameSelection);
-        topFrame.revalidate();
+        validate();
         topFrame.repaint();
-    }
-
-    // Variables declaration - do not modify                     
+        }
+    // Variables declaration - do not modify
     private javax.swing.JButton EnterButton;
     private javax.swing.JTextField UsernameBox;
     private javax.swing.JTextArea UsernameText;
@@ -152,5 +149,5 @@ public class Panel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    // End of variables declaration                   
+    // End of variables declaration
 }

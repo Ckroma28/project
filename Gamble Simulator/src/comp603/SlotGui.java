@@ -1,11 +1,11 @@
 package comp603;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import javax.swing.*;
 
 public class SlotGui extends JPanel {
 
@@ -13,7 +13,6 @@ public class SlotGui extends JPanel {
     private SlotMachine slotMachine;
     private JLabel balanceLabel;
     private JLabel resultLabel;
-    private boolean firstPlay = true;
 
     public SlotGui(User user) {
         this.user = user;
@@ -46,12 +45,12 @@ public class SlotGui extends JPanel {
         if (response == JOptionPane.YES_OPTION) {
             displayInstructions();
         }
-        showEnterToPlayScreen();
+        removeComponentsAfterInstructions();
     }
 
     private void displayInstructions() {
         String instructions = "1. You can bet as much as you want, however it must be within your budget\n"
-                + "2. Press 'Enter' to play and there will be a quit button for no.\n"
+                + "2. Type 'Enter' to play and 'x' to quit the game\n"
                 + "3. If the slot machine hits 2 of the same numbers, you win 1.5x the amount you bet\n"
                 + "4. If the slot machine numbers hit all 3 of the same number, you win 3x the amount you bet\n"
                 + "5. If all 3 numbers don't match, you lose the money that you bet\n"
@@ -59,7 +58,7 @@ public class SlotGui extends JPanel {
         JOptionPane.showMessageDialog(this, instructions, "Instructions", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void showEnterToPlayScreen() {
+    private void removeComponentsAfterInstructions() {
         removeAll();
         revalidate();
         repaint();
@@ -104,19 +103,24 @@ public class SlotGui extends JPanel {
     }
 
     private void handleSpin(double bet) {
-        user.setBalance((int) (user.getBalance() - bet)); 
+        user.setBalance((int) (user.getBalance() - bet));
         balanceLabel.setText("Balance: $" + user.getBalance());
 
         int[] slots = slotMachine.spinSlots();
         double winnings = slotMachine.calculateWinnings(slots, bet);
 
-        user.setBalance((int) (user.getBalance() + winnings)); 
+        user.setBalance((int) (user.getBalance() + winnings));
 
         balanceLabel.setText("Balance: $" + user.getBalance());
 
         displayResults(slots, winnings);
 
-        UserFileHandler.updateUserData(user, user.getBalance());
+        UserDB.updateUserBalance(user.getUsername(), user.getBalance()); // Update balance in the database
+
+        if (user.getBalance() <= 0) {
+            JOptionPane.showMessageDialog(this, "You are out of balance. Please come back later.");
+            System.exit(0);
+        }
     }
 
     private void displayResults(int[] slots, double winnings) {
@@ -124,7 +128,7 @@ public class SlotGui extends JPanel {
         revalidate();
         repaint();
 
-        setLayout(new GridBagLayout());
+        setLayout(new GridBagLayout()); 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -154,7 +158,7 @@ public class SlotGui extends JPanel {
         playAgainButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                handleBetInput();
+                removeComponentsAfterInstructions();
             }
         });
 
@@ -163,9 +167,7 @@ public class SlotGui extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(SlotGui.this);
                 topFrame.getContentPane().removeAll();
-                GameSelection gameSelection = new GameSelection();
-                gameSelection.updateUser(user); 
-                topFrame.add(gameSelection);
+                topFrame.add(new GameSelection(user)); // Pass the user object back to GameSelection
                 topFrame.validate();
                 topFrame.repaint();
             }
@@ -176,5 +178,10 @@ public class SlotGui extends JPanel {
 
         gbc.gridy = 1;
         add(buttonPanel, gbc);
+    }
+
+    void updateUser(User user) {
+        this.user = user;
+        balanceLabel.setText("Balance: $" + user.getBalance());
     }
 }
