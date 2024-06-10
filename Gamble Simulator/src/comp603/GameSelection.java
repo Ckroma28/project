@@ -9,9 +9,11 @@ import javax.swing.SwingUtilities;
 public class GameSelection extends javax.swing.JPanel {
 
     private User user;
+    private CoinflipGUI coinflipGUI;
 
     public GameSelection() {
         initComponents();
+        coinflipGUI = new CoinflipGUI(this); 
     }
 
     public void updateUser(User user) {
@@ -21,7 +23,7 @@ public class GameSelection extends javax.swing.JPanel {
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
@@ -49,6 +51,11 @@ public class GameSelection extends javax.swing.JPanel {
         CoinflipButton.setMaximumSize(new java.awt.Dimension(200, 50));
         CoinflipButton.setMinimumSize(new java.awt.Dimension(200, 50));
         CoinflipButton.setPreferredSize(new java.awt.Dimension(200, 50));
+        CoinflipButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                CoinflipButtonActionPerformed(evt);
+            }
+        });
 
         BlackjackButton.setText("BLACKJACK");
         BlackjackButton.setMaximumSize(new java.awt.Dimension(200, 50));
@@ -142,7 +149,7 @@ public class GameSelection extends javax.swing.JPanel {
                     .addComponent(SlotsButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(CoinflipButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(BlackjackButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(QuitButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(QuitButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(150, Short.MAX_VALUE))
         );
 
@@ -159,16 +166,16 @@ public class GameSelection extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
-    }// </editor-fold>    
-    
+    }// </editor-fold>
+
     private void QuitButtonActionPerformed(java.awt.event.ActionEvent evt) {
         JOptionPane.showMessageDialog(this, "Thanks for Playing!");
         System.exit(0);
     }
-    
+
     private void BlackjackButtonActionPerformed(ActionEvent evt) {
         BlackjackGUI blackjackGUI = new BlackjackGUI();
 
@@ -179,8 +186,15 @@ public class GameSelection extends javax.swing.JPanel {
         topFrame.repaint();
     }
 
+    private void CoinflipButtonActionPerformed(ActionEvent evt) {
+        JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        topFrame.getContentPane().removeAll();
+        topFrame.add(coinflipGUI);
+        topFrame.validate();
+        topFrame.repaint();
+    }
 
-    // Variables declaration - do not modify                     
+    // Variables declaration - do not modify
     private javax.swing.JButton BlackjackButton;
     private javax.swing.JTextArea ChooseGameText;
     private javax.swing.JButton CoinflipButton;
@@ -192,5 +206,5 @@ public class GameSelection extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    // End of variables declaration                   
+    // End of variables declaration
 }
