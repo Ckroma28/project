@@ -24,6 +24,8 @@ public class gamePanel extends javax.swing.JPanel {
     private List<String> dealerCount;
     private final Deck deck;
     int pressedAmount = 0;
+    GameSelection parentPanel;
+    int balance = 1000;
 
     public gamePanel(GameSelection parentPanel) {
         initComponents();
@@ -199,11 +201,6 @@ public class gamePanel extends javax.swing.JPanel {
         });
 
         StandButton.setText("Stand");
-        StandButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                StandButtonActionPerformed(evt);
-            }
-        });
 
         QuitButton.setText("Quit");
         QuitButton.addActionListener(new java.awt.event.ActionListener() {
@@ -343,19 +340,6 @@ public class gamePanel extends javax.swing.JPanel {
         pressedAmount++;
     }
 
-    private void StandButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        countHandValue(userCount);
-        countHandValue(dealerCount);
-
-        if (countHandValue(userHand) > countHandValue(dealerHand)) {
-            JOptionPane.showMessageDialog(null, "You Lose!", "Game Over", JOptionPane.INFORMATION_MESSAGE);
-            System.exit(0);
-        } else {
-            JOptionPane.showMessageDialog(null, "You win!", "Game Over", JOptionPane.INFORMATION_MESSAGE);
-            System.exit(0);
-        }
-    }
-    
     private int countHandValue(List<String> hand) {
         int count = 0;
         int aceCount = 0;
