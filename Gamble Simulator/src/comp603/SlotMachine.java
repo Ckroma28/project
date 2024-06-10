@@ -104,9 +104,8 @@ public class SlotMachine {
         }
     }
 
-    private int[] spinSlots() {
+    public int[] spinSlots() {
         int[] slots = {number.nextInt(10), number.nextInt(10), number.nextInt(10)};
-        System.out.println(slots[0] + "  " + slots[1] + "  " + slots[2]);
         return slots;
     }
 
@@ -122,6 +121,16 @@ public class SlotMachine {
         } else {
             System.out.println("You lost $" + betAmount);
             user.setBalance((int) (user.getBalance() - betAmount));
+        }
+    }
+
+    public double calculateWinnings(int[] slots, double bet) {
+        if (slots[0] == slots[1] && slots[0] == slots[2]) {
+            return bet * 3;
+        } else if (slots[0] == slots[1] || slots[0] == slots[2] || slots[1] == slots[2]) {
+            return bet * 1.5;
+        } else {
+            return -bet;
         }
     }
 }

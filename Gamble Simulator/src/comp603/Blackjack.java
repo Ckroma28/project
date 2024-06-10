@@ -2,7 +2,7 @@ package comp603;
 
 import java.util.*;
 
-public class Blackjack {
+public class Blackjack extends Games {
 
     private Deck deck;
     private List<String> userHand;
@@ -13,16 +13,18 @@ public class Blackjack {
     private Scanner scanner;
 
     public Blackjack(User user) {
+        super(user);
+        String username = user.getUsername();
+        User loadedUser = UserFileHandler.loadUsersData(username);
         this.deck = new Deck();
         this.userHand = new ArrayList<>();
         this.dealerHand = new ArrayList<>();
         this.user = user;
-        String username = user.getUsername();
         this.userData = new HashMap<>();
-        User loadedUser = UserFileHandler.loadUsersData(username);
         this.userData.put(loadedUser.getUsername(), (double) loadedUser.getBalance());
         this.balance = loadedUser.getBalance();
         scanner = new Scanner(System.in);
+        userHand = new ArrayList<>();
     }
 
     public void play() {
@@ -30,7 +32,7 @@ public class Blackjack {
         boolean playAgainLoop = true;
 
         System.out.println("Welcome to Blackjack!");
-        explanation();
+        explaination();
 
         while (playAgainLoop) {
             deck.shuffle();
@@ -47,33 +49,33 @@ public class Blackjack {
                     scanner.nextLine();
 
                     if (betAmount <= 0 || betAmount > balance) {
-                        System.out.println("Invalid bet amount. Please enter a bet amount between 1 and your balance.");
+                        System.out.println("Invalid bet amount. Please enter a valid bet amount");
                     } else {
                         validBet = true;
                     }
                 } catch (InputMismatchException e) {
-                    System.out.println("Invalid input. Please enter a valid numeric bet amount.");
+                    System.out.println("Invalid input. Please enter a valid bet amount.");
                     scanner.nextLine();
                 }
             } while (!validBet);
-
+            
             dealStartingHand();
             printHands(true);
-
+            
             while (true) {
                 System.out.println("Hit or Stand? (h/s): ");
+                System.out.println("(or input 'q' to exit program)");
                 String choice = scanner.nextLine();
-
+                
                 if (choice.equalsIgnoreCase("h")) {
                     hit(userHand);
                     printHands(true);
-                    System.out.println(countHandValue(userHand));
-
+                    
                     if (countHandValue(userHand) > 21) {
                         System.out.println("Bust! Dealer wins.");
                         balance -= betAmount;
-
-                        if (!askPlayAgain(scanner)) {
+                        
+                        if (!askPlayAgain()) {
                             resetGame();
                             playAgainLoop = false;
                         }
@@ -86,59 +88,62 @@ public class Blackjack {
                     boolean win = determineWinner();
                     printHands(false);
                     System.out.println("Dealer's hand: " + dealerHand);
-
+                    
                     if (win) {
-                        System.out.println("You win!");
+                        System.out.println("\nYou win!");
                         balance += betAmount;
                         UserFileHandler.updateUserData(user, balance);
                     } else if (!win && countHandValue(userHand) == countHandValue(dealerHand)) {
                         System.out.println("Tie!");
                     } else {
-                        System.out.println("You lose!");
+                        System.out.println("\nYou lose!");
                         balance -= betAmount;
                         UserFileHandler.updateUserData(user, balance);
                     }
-
+                    
                     System.out.println("Your balance is: $" + balance);
-                    if (!askPlayAgain(scanner)) {
+                    if (!askPlayAgain()) {
                         playAgainLoop = false;
                     }
                     resetGame();
                     break;
+                } else if (choice.equalsIgnoreCase("q")) {
+                    System.out.println("Thanks for playing!");
+                    return;
                 } else {
                     System.out.println("Invalid choice! Please enter 'h' or 's'.");
                 }
             }
         }
     }
-
+    
     public void dealStartingHand() {
         userHand.add(deck.draw());
         userHand.add(deck.draw());
         dealerHand.add(deck.draw());
         dealerHand.add(deck.draw());
     }
-
+    
     private void hit(List<String> hand) {
         hand.add(deck.draw());
     }
-
+    
     private void printHands(boolean showDealer) {
         System.out.println("Your hand: " + userHand + " ");
-
+        
         if (showDealer) {
             System.out.println("Dealer's hand: [" + dealerHand.get(0) + ", (?)]");
         }
     }
-
+    
     private int countHandValue(List<String> hand) {
         int count = 0;
         int aceCount = 0;
-
+        
         for (String card : hand) {
             String[] parts = card.split(" ");
             String rank = parts[0];
-
+            
             if (rank.equals("Ace")) {
                 aceCount++;
                 count += 11;
@@ -154,11 +159,11 @@ public class Blackjack {
         }
         return count;
     }
-
+    
     public boolean determineWinner() {
         int userValue = countHandValue(userHand);
         int dealerValue = countHandValue(dealerHand);
-
+        
         if (dealerValue > 21 || userValue > dealerValue) {
             return true;
         } else if (userValue == dealerValue) {
@@ -173,23 +178,10 @@ public class Blackjack {
         dealerHand.clear();
     }
     
-    public boolean askPlayAgain(Scanner scanner) {
-        System.out.println("\nDo you want to play again? (yes/no)");
-        String playAgain;
-        do {
-            playAgain = scanner.nextLine().trim().toLowerCase();
-            if (playAgain.equals("yes") || playAgain.equals("no")) {
-                break;
-            } else {
-                System.out.println("Invalid input! Please enter 'yes' or 'no'.");
-            }
-        } while (true);
-        return playAgain.equals("yes");
-    }
-    
-    private void explanation() {
-        System.out.println("Would you like an explanation on how this game works? (yes/no)");
+    private void explaination() {
+        System.out.println("Would you like an explaination on how this game works? (yes/no)");
         String response = scanner.nextLine().toLowerCase();
+        
         if (response.equals("yes")) {
             System.out.println("The goal of blackjack is to get your count closest to 21.");
             System.out.println("The user and dealer both get 2 cards each.");
