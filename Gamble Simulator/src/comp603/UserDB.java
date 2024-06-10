@@ -16,6 +16,11 @@ public class UserDB {
     // JDBC variables for managing connection
     private static Connection connection;
 
+    // Static initializer block to automatically connect to the database
+    static {
+        connect();
+    }
+
     // Method to establish a database connection
     public static void connect() {
         try {

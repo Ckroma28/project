@@ -6,7 +6,10 @@ import java.awt.event.ActionListener;
 
 public class Panel extends javax.swing.JPanel {
 
-    public Panel() {
+    private JFrame parentFrame;
+
+    public Panel(JFrame frame) {
+        this.parentFrame = frame;
         initComponents();
         UserDB.connect(); // Connect to the database when the panel is initialized
     }
@@ -135,12 +138,12 @@ public class Panel extends javax.swing.JPanel {
         GameSelection gameSelection = new GameSelection(user);
         gameSelection.updateUser(user);
 
-        JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-        topFrame.getContentPane().removeAll();
-        topFrame.getContentPane().add(gameSelection);
-        validate();
-        topFrame.repaint();
-        }
+        parentFrame.getContentPane().removeAll();
+        parentFrame.getContentPane().add(gameSelection);
+        parentFrame.revalidate();
+        parentFrame.repaint();
+    }
+
     // Variables declaration - do not modify
     private javax.swing.JButton EnterButton;
     private javax.swing.JTextField UsernameBox;
